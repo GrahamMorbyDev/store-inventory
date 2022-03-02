@@ -18,8 +18,8 @@ def clean_price(price_str):
 def clean_date(date_str):
     split_date = date_str.split('/')
     try:
-        month = int(split_date[1])
-        day = int(split_date[0])
+        month = int(split_date[0])
+        day = int(split_date[1])
         year = int(split_date[2])
         return_date = datetime.date(year, month, day)
     except ValueError:
@@ -37,10 +37,10 @@ def clean_date(date_str):
 def add_csv_data():
     with open('inventory.csv') as csvfile:
         data = csv.reader(csvfile)
+        headers = next(data)
         for row in data:
             product_in_db = session.query(Product).filter(Product.product_name == row[0]).one_or_none()
             if product_in_db is None:
-                print(row[1])
                 product_name = row[0]
                 product_quantity = row[2]
                 product_price = clean_price(row[1])
@@ -80,9 +80,36 @@ def app():
                 print(f'Name: {item.product_name}, Quantity: {item.product_quantity}, Price: {item.product_price}')
             input('Press ENTER to continue...')
         elif choice == 'a':
-            pass
+            product_name = input('What is the name of the product?  ')
+            product_quantity = input('How many do we have? ')
+
+            price_error = True
+            while price_error:
+                price = input('''\nHow much is the product? 
+                                 \r*price must be in the correct format
+                                 \rexample: $10.99    ''')
+                price = clean_price(price)
+                if type(price) == int:
+                    price_error = False
+
+            date = datetime.date.today()
+            new_product = Product(product_name=product_name, product_quantity=product_quantity, product_price=price, date_updated=date)
+
+            session.add(new_product)
+            session.commit()
+            print('New Product added')
+
         elif choice == 'b':
-            pass
+            with open('new_inventory.csv', 'a') as csv_file:
+                header = ['name', 'quantity', 'price', 'date updated']
+                writer = csv.writer(csv_file)
+                writer.writerow(header)
+                products = session.query(Product)
+                for product in products:
+                    data = [product.product_name, product.product_quantity, product.product_price, product.date_updated]
+                    writer.writerow(data)
+                input('''\n*** New backup CSV file created ***
+                         \rPress ENTER to continue ''')
         else:
             print('Goodbye and thanks for using this tool')
             exit()
