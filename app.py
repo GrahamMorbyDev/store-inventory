@@ -77,7 +77,7 @@ def app():
         choice = menu()
         if choice == 'v':
             for item in session.query(Product):
-                print(f'Name: {item.product_name}, Quantity: {item.product_quantity}, Price: {item.product_price}')
+                print(f'Name: {item.product_name}, Quantity: {item.product_quantity}, Price: ${item.product_price/100}')
             input('Press ENTER to continue...')
         elif choice == 'a':
             product_name = input('What is the name of the product?  ')
@@ -97,7 +97,8 @@ def app():
 
             session.add(new_product)
             session.commit()
-            print('New Product added')
+            input('''\n***New Product added***
+                     \r Press ENTER to continue''')
 
         elif choice == 'b':
             with open('new_inventory.csv', 'a') as csv_file:
