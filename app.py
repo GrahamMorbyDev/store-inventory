@@ -7,7 +7,7 @@ def clean_price(price_str):
     split_price = price_str.split('$')
     try:
         new_price = float(split_price[1])
-    except IndexError:
+    except ValueError:
         input('''\nThe amount you entered is not correct, please try again
                  \r Example: $10.99
                  \r Press ENTER to continue''')
@@ -40,6 +40,7 @@ def add_csv_data():
         for row in data:
             product_in_db = session.query(Product).filter(Product.product_name == row[0]).one_or_none()
             if product_in_db is None:
+                print(row[1])
                 product_name = row[0]
                 product_quantity = row[2]
                 product_price = clean_price(row[1])
@@ -75,7 +76,9 @@ def app():
     while running:
         choice = menu()
         if choice == 'v':
-            pass
+            for item in session.query(Product):
+                print(f'Name: {item.product_name}, Quantity: {item.product_quantity}, Price: {item.product_price}')
+            input('Press ENTER to continue...')
         elif choice == 'a':
             pass
         elif choice == 'b':
@@ -88,3 +91,4 @@ def app():
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
     add_csv_data()
+    app()
