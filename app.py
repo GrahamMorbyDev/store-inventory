@@ -6,12 +6,16 @@ import datetime
 def clean_price(price_str):
     split_price = price_str.split('$')
     try:
+        if not price_str.startswith('$'):
+            raise ValueError('Pricing error, we only accept $ pricing, please try again')
         new_price = float(split_price[1])
-    except ValueError:
+    except ValueError as err:
         input('''\nThe amount you entered is not correct, please try again
                  \r Example: $10.99
                  \r Press ENTER to continue''')
+        print("({})".format(err))
     else:
+        price_error = False
         return int(new_price*100)
 
 
