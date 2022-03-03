@@ -16,6 +16,5 @@ class Product(Base):
     product_price = Column(Integer)
     date_updated = Column(DATETIME)
 
-
-def __repr__(self):
-    print(f'Product name: {self.product_name}, Quantity: {self.product_quantity}, Price: {self.product_price}, Updated: {self.date_updated}')
+    def __repr__(self):
+        print(f'Product name: {self.product_name}, Quantity: {self.product_quantity}, Price: {self.product_price}, Updated: {self.date_updated}')
