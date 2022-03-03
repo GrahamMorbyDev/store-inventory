@@ -34,9 +34,32 @@ def clean_date(date_str):
         return return_date
 
 
+def clean_id(id_str, options):
+    try:
+        product_id = int(id_str)
+    except ValueError:
+        input('''
+                    \n******* ID ERROR *******
+                    \rThe ID should be a number
+                    \rPress enter to try again
+                    \r*************************
+                ''')
+    else:
+        if product_id in options:
+            return product_id
+        else:
+            input(f'''
+                \n******* ID ERROR *******
+                \rOptions: {options}
+                \rPress enter to try again
+                \r*************************
+            ''')
+            return
+
+
 def add_csv_data():
-    with open('inventory.csv') as csvfile:
-        data = csv.reader(csvfile)
+    with open('inventory.csv') as csv_file:
+        data = csv.reader(csv_file)
         headers = next(data)
         for row in data:
             product_in_db = session.query(Product).filter(Product.product_name == row[0]).one_or_none()
@@ -76,8 +99,19 @@ def app():
     while running:
         choice = menu()
         if choice == 'v':
+            id_options = []
             for item in session.query(Product):
-                print(f'Name: {item.product_name}, Quantity: {item.product_quantity}, Price: ${item.product_price/100}')
+                id_options.append(item.id)
+            id_error = True
+            while id_error:
+                id_choice = input(f'''
+                                \nId Options: {id_options}
+                                \rProduct Id: ''')
+                id_choice = clean_id(id_choice, id_options)
+                if type(id_choice) == int:
+                    id_error = False
+            item = session.query(Product).filter(Product.id == id_choice).first()
+            print(f'Name: {item.product_name}, Quantity: {item.product_quantity}, Price: ${item.product_price/100}')
             input('Press ENTER to continue...')
         elif choice == 'a':
             product_name = input('What is the name of the product?  ')
