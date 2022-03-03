@@ -119,7 +119,18 @@ def app():
             input('Press ENTER to continue...')
         elif choice == 'a':
             product_name = input('What is the name of the product?  ')
-            product_quantity = input('How many do we have? ')
+
+            quantity_error = True
+            while quantity_error:
+                try:
+                    product_quantity = input('How many do we have? ')
+                    product_quantity = int(product_quantity)
+                except ValueError:
+                    input('''\nWe can only accept a number for quantity 
+                             \nPress ENTER to try again''')
+                else:
+                    if type(product_quantity) == int:
+                        quantity_error = False
 
             price_error = True
             while price_error:
